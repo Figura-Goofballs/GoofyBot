@@ -35,7 +35,7 @@
             type = "app";
             program = "${pkgs.writeScript "${name}-run" ''
               #!${pkgs.bash}/bin/bash
-              ${pkgs.nodePackages_latest.nodemon}/bin/nodemon
+              ${pkgs.nodePackages_latest.nodemon}/bin/nodemon -x 'node index.js || touch index.js'
             ''}";
           };
           run = taskFor {
