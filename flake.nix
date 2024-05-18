@@ -30,7 +30,7 @@
       in rec {
         name = "goofy-plugin";
         apps = rec {
-          taskFor = { }: {
+          taskFor = { task }: {
             type = "app";
             program = "${pkgs.writeScript "${name}-run" ''
               #!${pkgs.bash}/bin/bash
@@ -38,13 +38,9 @@
             ''}";
           };
           run = taskFor {
-            task = "runClient";
-            minecraft = "1.20.1";
-            minecraft-out = "1.20.4";
-            fabric-api = "0.83.0";
-            loom = "1.2-SNAPSHOT";
+            task = "runBot";
           };
-          default = run1;
+          default = run;
 
           code.type = "app";
           code.program = with pkgs; "${writeScript "${name}-code" ''

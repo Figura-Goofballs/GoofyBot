@@ -1,0 +1,19 @@
+{
+  "name": "goofybot",
+  "version": "1.0.0",
+  "description": "Goofy discord bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Figura-Goofballs/GoofyBot.git"
+  },
+  "author": "TheBunnyMan123, PoolloverNathan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Figura-Goofballs/GoofyBot/issues"
+  },
+  "homepage": "https://github.com/Figura-Goofballs/GoofyBot#readme"
+}
