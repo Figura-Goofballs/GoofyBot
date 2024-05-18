@@ -25,6 +25,7 @@
           vscodeExtensions = with nix-vscode-extensions.extensions.${system}.vscode-marketplace; [
             mhutchie.git-graph
             aaron-bond.better-comments
+            dbaeumer.vscode-eslint
           ];
         };
       in rec {
@@ -34,7 +35,7 @@
             type = "app";
             program = "${pkgs.writeScript "${name}-run" ''
               #!${pkgs.bash}/bin/bash
-              node .
+              nodemon
             ''}";
           };
           run = taskFor {
@@ -49,7 +50,7 @@
           ''}";
         };
         devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [nix git gh bashInteractive nodePackages_latest.nodejs nodePackages_latest.nodemon nodePackages_latest.ts-node];
+          buildInputs = with pkgs; [nix git gh bashInteractive nodePackages_latest.nodejs nodePackages_latest.nodemon nodePackages_latest.eslint];
         };
       }
     );

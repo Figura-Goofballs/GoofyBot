@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Figura-Goofballs/GoofyBot/issues"
   },
-  "homepage": "https://github.com/Figura-Goofballs/GoofyBot#readme"
+  "homepage": "https://github.com/Figura-Goofballs/GoofyBot#readme",
+  "dependencies": {
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5"
+  }
 }
