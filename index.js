@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, ThreadChannel } = require("discord.js");
-require("dotenv/config"); // ex: ts=2
+require("dotenv/config"); // ex: ts=2 sw=2
 
 const client = new Client({
 	intents: [
@@ -54,8 +54,12 @@ client.on('messageCreate', message => {
 
 				message.reply("[" + msgCapitalized[2] + "](https://github.com/Figura-Goofballs/GoofyPlugin/wiki/" + msg[2] + ")");
 				return;
-			default:
 
+			case "say":
+				message.reply(message.toString().slice("!gh say ".length))
+				return
+
+			default:
 				message.reply("[GitHub Repo](https://github.com/Figura-Goofballs/GoofyPlugin/)");
 				return;
 		}
