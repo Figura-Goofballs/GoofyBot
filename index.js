@@ -58,6 +58,7 @@ client.on('messageCreate', async message => {
 			}
 console.log(msg[0])
 			switch (msg[0]) {
+				case "github":
 				case "gh":
 					switch(msg[1]) {
 						case "pull":
