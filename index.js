@@ -41,11 +41,13 @@ client.on('messageCreate', async message => {
 	
 		console.log(msg)
 
-		if (msg[0].startsWith("!"))
+		if (msg[0].startsWith("!")) {
 			msg[0] = msg[0].replace(/^!/, "")
-		else if (msg[0] == `<@${client.user.id}>`)
+			msgCapitalized[0] = msgCapitalized[0].replace(/^!/, "")
+		} else if (msg[0] == `<@${client.user.id}>`) {
 			msg.shift()
-		else
+			msgCapitalized.shift()
+		}else
 			return
 
 			console.log(message.toString());
