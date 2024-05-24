@@ -43,7 +43,7 @@ client.on('messageCreate', async message => {
 
 		if (msg[0].startsWith("!"))
 			msg[0] = msg[0].replace(/^!/, ""), msgCapitalized[0] = msgCapitalized[0].replace(/^!/, "")
-		else if (msg[0] == "<@" + client.user.id + ">")
+		else if (msg[0] == `<@${client.user.id}>`)
 			msg.shift(), msgCapitalized.shift()
 		else
 			return
