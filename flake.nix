@@ -35,8 +35,7 @@
             type = "app";
             program = "${pkgs.writeScript "${name}-run" ''
               #!${pkgs.bash}/bin/bash
-              ${pkgs.nodePackages_latest.nodejs}/bin/npm i 
-              ${pkgs.nodePackages_latest.nodejs}/bin/node index.js
+              exec ${pkgs.nix}/bin/nix develop -c nodemon -x 'node index.js || touch index.js' | ${pkgs.coreutils}/bin/tee -a logs.log
             ''}";
           };
           run = taskFor {
@@ -47,12 +46,22 @@
           code.type = "app";
           code.program = with pkgs; "${writeScript "${name}-code" ''
             #!${bash}/bin/bash
-            exec nix develop -c ${codium}/bin/codium --verbose -w . "$@"
+            exec ${pkgs.nix}/bin/nix develop path:${./.} -c ${codium}/bin/codium --verbose -w . "$@"
           ''}";
         };
         devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [nix git gh bashInteractive nodePackages_latest.nodejs nodePackages_latest.nodemon nodePackages_latest.eslint];
+          buildInputs = with pkgs; [nix git gh bashInteractive neofetch] ++ (with nodePackages_latest; [nodejs nodemon eslint]);
         };
+        packages.node_modules = pkgs.runCommand "node_modules" {
+          buildInputs = [pkgs.nodePackages_latest.nodejs];
+          outputHashMode = "recursive";
+          outputHash = "sha256:" + pkgs.lib.fakeSha256;
+        } ''
+          ln -s ${./package.json} package.json
+          ln -s ${./package-lock.json} package-lock.json
+          npm i
+          mv node_modules $out
+        '';
       }
     );
 }
