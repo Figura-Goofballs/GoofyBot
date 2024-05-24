@@ -16,6 +16,7 @@ client.on('ready', () => {
 })
 
 let cooldowns = {}
+let shutup = false
 function cooldown(name, max, rate, inc = 1) {
 	cooldowns[name] ??= 0
 	if (cooldowns[name] > max) {
@@ -26,8 +27,8 @@ function cooldown(name, max, rate, inc = 1) {
 	}
 }
 
-
 client.on('messageCreate', async message => {
+	console.log("<@" + client.user.id + ">")
 	function lost(why) {
 		throw { message: `Got lost… (${why})`, magic: true }
 	}
@@ -35,11 +36,17 @@ client.on('messageCreate', async message => {
 		var msg = message.toString().toLowerCase().split(' ');
 		var msgCapitalized = message.toString().split(' ');
 
-		if (msg[0] == "<@1241455011565670460>" && msg[0] == "how" && msg[1] == "goofy" && msg[2] == "are" && msg[3] == "you")
+		if (msg[0] == "<@" + client.user.id + ">" && msg[0] == "how" && msg[1] == "goofy" && msg[2] == "are" && msg[3] == "you")
 			return message.reply("100% goofy")
+	
+																																										console.log(msg)
 
-		if (msg[0].startsWith("!") || msg[0] == "<@1241455011565670460>") {
-			msg[0] = msg[0].replace(new RegExp("^!"), "")
+		if (msg[0].startsWith("!"))
+			msg[0] = msg[0].replace(/^!/, "")
+		else if (msg[0] == "<@" + client.user.id + ">")
+			msg.shift()
+		else
+			return
 
 			console.log(message.toString());
 			const aid = message.author.id
@@ -166,6 +173,11 @@ console.log(msg[0])
 							await message.reply("root")
 							return
 
+						case "shutup":
+							shutup = !shutup
+							await message.reply(`${shutup ? "ignoring" : "listening for"} \`!gh\` (until I restart)`)
+							return
+
 						case "mksudo":
 						case "rmsudo":
 							const who = /^(<@(?<uid>\d+)>|(?<username>[a-z0-9_.]{2,32}))$/.exec(msg[1])
@@ -202,7 +214,6 @@ console.log(msg[0])
 
 				default:
 					await message.reply("Unknown command `" + msgCapitalized[0] + "` (try `!help`)", { ephemeral: true })
-			}
 		}
 
 	} catch (e) {
