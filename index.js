@@ -16,13 +16,13 @@ client.on('ready', () => {
 })
 
 let cooldowns = {}
-function cooldown(name, max, rate) {
+function cooldown(name, max, rate, inc = 1) {
 	cooldowns[name] ??= 0
 	if (cooldowns[name] > max) {
 		return true
 	} else {
 		cooldowns[name]++
-		setTimeout(() => cooldowns[rate]--, rate)
+		setTimeout(() => cooldowns[name]--, rate)
 	}
 }
 
@@ -39,6 +39,9 @@ client.on('messageCreate', async message => {
 			return message.reply("100% goofy")
 
 		if (msg[0] == "!gh" || msg[0] == "<@1243329635937288274>") {
+			const aid = message.author.id
+			if (cooldown("bruteforce" + aid, 3, 1000))
+				return void await message.reply("bruteforce moment, go away")
 			if (msg[1] == "make" && msg[2] == "me" && msg[3] == "a" && msg[4] == "sandwich")
 				return void await message.reply("What? Make it yourself.")
 			if (msg[1] == "get" && msg[2] == "lost")
@@ -55,7 +58,7 @@ client.on('messageCreate', async message => {
 				case "pull":
 				case "pr":
 				case "issue":
-					if (cooldown("ref", 5, 2000)) return;
+					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
 					if (msg[2] == null) {
 						await message.reply('Please specify a Pull Request / Issue');
 						return;
@@ -65,7 +68,7 @@ client.on('messageCreate', async message => {
 
 				case "file":
 				case "path":
-					if (cooldown("ref", 5, 2000)) return;
+					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
 					if (msg[2] == null) {
 						await message.reply('Please specify a File / Path');
 						return;
@@ -75,7 +78,7 @@ client.on('messageCreate', async message => {
 
 				case "wiki":
 				case "docs":
-					if (cooldown("ref", 5, 2000)) return;
+					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
 					if (msg[2] == null) {
 						await message.reply("[Wiki](https://github.com/Figura-Goofballs/GoofyPlugin/wiki/)");
 						return;
@@ -85,14 +88,21 @@ client.on('messageCreate', async message => {
 					return;
 
 				case "neofetch":
-					if (cooldown("ref", 1, 15000)) return;
+					if (cooldown("ref", 1, 15000)) return void await message.reply("Cooldown...");
 					const child = require("child_process").spawn("neofetch")
-					let resp = "```ansi\n"
+					let resp = ""
 					for await (let bodyPart of child.stdout) {
 						resp += bodyPart
 					}
 					// abandon the child
-					resp = resp.replace(/\[?25l\[?7l/g, "").replace(/\[20A\[9999999D/g, "").replace(/\[46C/g, "").slice(0, 2000-3) + "```"
+					resp = "```ansi\n" + resp
+						.replace(/(?<=\[)(?=m)/g, "0")
+						.replace(/\[0m(?=\[3\dm)/g, "")
+						.replace(/\[?25l\[?7l/g, "")
+						.replace(/\[20A\[9999999D/g, "")
+						.replace(/\[46C/g, "")
+						.replace(/\[4\dm   \[4\dm[^]+$/, "")
+						.slice(11, 1989) + "```"
 					await message.reply(resp)
 					return
 
@@ -133,8 +143,39 @@ client.on('messageCreate', async message => {
 							await message.reply(message.toString().slice("!gh sudo say ".length))
 							return
 
+						case "`say`":
+							await message.reply('`' + message.toString().slice("!gh sudo say ".length) + "`")
+							return
+
 						case "whoami":
 							await message.reply("root")
+							return
+
+						case "mksudo":
+						case "rmsudo":
+							const who = /^(<@(?<uid>\d+)>|(?<username>[a-z0-9_.]{2,32}))$/.exec(msg[2])
+							if (who.uid)
+								who = client.members.fetch(+who.uid)
+							else if (who.username)
+								who = client.members.fetch(who.username)
+							else
+								return void await message.reply("invalid user — need either a mention or a username")
+							if (!who)
+								return void await message.reply("unfortunately they don't exist")
+							let goal = msg[1] == "mksudo"
+							  , cur  = who.roles.cache.has("1243395049170014259")
+							switch (goal + cur) {
+								case "falsefalse":
+									await message.reply("they already aren't")
+								case "truetrue":
+									await message.reply("they already are")
+								case "truefalse":
+									await who.roles.add("1243395049170014259")
+									await message.reply("they are a sudoer now")
+								case "falsetrue":
+									await who.roles.remove("1243395049170014259")
+									await message.reply("they aren't a sudoer anymore")
+							}
 							return
 
 						default:
@@ -147,12 +188,12 @@ client.on('messageCreate', async message => {
 
 				case "repo":
 				case undefined:
-					if (cooldown("ref", 5, 2000)) return;
+					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
 					await message.reply("[GitHub Repo](https://github.com/Figura-Goofballs/GoofyPlugin/)");
 					return;
 
 				default:
-					await message.reply("Unknown command `" + msgCapitalized[1] + "`", { ephemeral: true })
+					await message.reply("Unknown command `" + msgCapitalized[1] + "` (try `!gh help`)", { ephemeral: true })
 			}
 		}
 
