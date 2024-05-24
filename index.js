@@ -35,63 +35,70 @@ client.on('messageCreate', async message => {
 		var msg = message.toString().toLowerCase().split(' ');
 		var msgCapitalized = message.toString().split(' ');
 
-		if (msg[0] == "<@1241455011565670460>" && msg[1] == "how" && msg[2] == "goofy" && msg[3] == "are" && msg[4] == "you")
+		if (msg[0] == "<@1241455011565670460>" && msg[0] == "how" && msg[1] == "goofy" && msg[2] == "are" && msg[3] == "you")
 			return message.reply("100% goofy")
 
 		if (msg[0].startsWith("!") || msg[0] == "<@1241455011565670460>") {
+			msg[0] = msg[0].replace(new RegExp("^!"), "")
+
 			console.log(message.toString());
 			const aid = message.author.id
 			if (cooldown("bruteforce" + aid, 3, 1000))
 				return void await message.reply("bruteforce moment, go away")
-			if (msg[1] == "make" && msg[2] == "me" && msg[3] == "a" && msg[4] == "sandwich")
+			if (msg[0] == "make" && msg[1] == "me" && msg[2] == "a" && msg[3] == "sandwich")
 				return void await message.reply("What? Make it yourself.")
-			if (msg[1] == "get" && msg[2] == "lost")
+			if (msg[0] == "get" && msg[1] == "lost")
 				lost("got lost")
-			let combMsg = msg[2], combCapMsg = msgCapitalized[2]
-			if (msg[2] != null) {
+			let combMsg = msg[1], combCapMsg = msgCapitalized[1]
+			if (msg[1] != null) {
 				for (let i = 3; i < msg.length; i++ ) {
 					combMsg += "-" + msg[i]
 					combCapMsg += "-" + msgCapitalized[i]
 				}
 			}
-
-			switch (msg[1]) {
+console.log(msg[0])
+			switch (msg[0]) {
 				case "gh":
-					switch(msg[2]) {
+					switch(msg[1]) {
 						case "pull":
 						case "pr":
 						case "issue":
 							if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
-							if (msg[3] == null) {
+							if (msg[2] == null) {
 								await message.reply('Please specify a Pull Request / Issue');
 								return;
 							}
-							await message.reply('[#' + msg[3].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/pull/" + encode(msg[3]) + ")");
+							await message.reply('[#' + msg[2].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/pull/" + encode(msg[2]) + ")");
 							return;
 
 						case "file":
 						case "path":
 							if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
-							if (msg[3] == null) {
+							if (msg[2] == null) {
 								await message.reply('Please specify a File / Path');
 								return;
 							}
-							await message.reply('[' + msgCapitalized[3].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/tree/main/" + encode(msgCapitalized[3]) + ")");
+							await message.reply('[' + msgCapitalized[2].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/tree/main/" + encode(msgCapitalized[2]) + ")");
+							return;
+						case "repo":
+						case undefined:
+							if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
+							await message.reply("[GitHub Repo](https://github.com/Figura-Goofballs/GoofyPlugin/)");
 							return;
 						default:
-							await message.reply("Unknown subcommand `" + msgCapitalized[2] + "` (try `!gh help`)", { ephemeral: true })
+							await message.reply("Unknown subcommand `" + msgCapitalized[1] + "` (try `!help`)", { ephemeral: true })
 							return;
 					}
 					return;
 				case "wiki":
 				case "docs":
 					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
-					if (msg[2] == null) {
+					if (msg[1] == null) {
 						await message.reply("[Wiki](https://github.com/Figura-Goofballs/GoofyPlugin/wiki/)");
 						return;
 					}
 
-					await message.reply("[" + msgCapitalized[2].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/wiki/" + encode(msg[2]) + ")");
+					await message.reply("[" + msgCapitalized[1].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/wiki/" + encode(msg[1]) + ")");
 					return;
 
 				case "neofetch":
@@ -134,18 +141,18 @@ client.on('messageCreate', async message => {
 					if (!message.member.roles.cache.has("1243395049170014259"))
 						return void await message.reply(`<@${message.author.id}> is not in the sudoers ${/*<@&1243395049170014259>*/""}file. This incident will be reported.`)
 					msg.shift(); msgCapitalized.shift()
-					if (msg[1] == "make" && msg[2] == "me" && msg[3] == "a" && msg[4] == "sandwich")
+					if (msg[0] == "make" && msg[1] == "me" && msg[2] == "a" && msg[3] == "sandwich")
 						return void await message.reply("Okay.")
-					if (msg[1] == "get" && msg[2] == "lost")
+					if (msg[0] == "get" && msg[1] == "lost")
 						lost("got lost")
-					combMsg = msg[2], combCapMsg = msgCapitalized[2]
-					if (msg[2] != null) {
+					combMsg = msg[1], combCapMsg = msgCapitalized[1]
+					if (msg[1] != null) {
 						for (let i = 3; i < msg.length; i++ ) {
 							combMsg += "-" + msg[i]
 							combCapMsg += "-" + msgCapitalized[i]
 						}
 					}
-					switch (msg[1]) {
+					switch (msg[0]) {
 						case "say":
 							await message.reply(message.toString().slice("!gh sudo say ".length))
 							return
@@ -160,7 +167,7 @@ client.on('messageCreate', async message => {
 
 						case "mksudo":
 						case "rmsudo":
-							const who = /^(<@(?<uid>\d+)>|(?<username>[a-z0-9_.]{2,32}))$/.exec(msg[2])
+							const who = /^(<@(?<uid>\d+)>|(?<username>[a-z0-9_.]{2,32}))$/.exec(msg[1])
 							if (who.uid)
 								who = client.members.fetch(+who.uid)
 							else if (who.username)
@@ -169,7 +176,7 @@ client.on('messageCreate', async message => {
 								return void await message.reply("invalid user — need either a mention or a username")
 							if (!who)
 								return void await message.reply("unfortunately they don't exist")
-							let goal = msg[1] == "mksudo"
+							let goal = msg[0] == "mksudo"
 							  , cur  = who.roles.cache.has("1243395049170014259")
 							switch (goal + cur) {
 								case "falsefalse":
@@ -186,21 +193,14 @@ client.on('messageCreate', async message => {
 							return
 
 						default:
-							await message.reply("Unknown command `" + msgCapitalized[1] + "`", { ephemeral: true })
+							await message.reply("Unknown command `" + msgCapitalized[0] + "`", { ephemeral: true })
 							return
 					}
 					await message.reply("Got lost… (this should never happen!)")
 					return
 
-
-				case "repo":
-				case undefined:
-					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
-					await message.reply("[GitHub Repo](https://github.com/Figura-Goofballs/GoofyPlugin/)");
-					return;
-
 				default:
-					await message.reply("Unknown command `" + msgCapitalized[1] + "` (try `!gh help`)", { ephemeral: true })
+					await message.reply("Unknown command `" + msgCapitalized[0] + "` (try `!help`)", { ephemeral: true })
 			}
 		}
 
