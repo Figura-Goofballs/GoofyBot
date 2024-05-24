@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ThreadChannel, ActivityType } = require("discord.js");
+const { Client, GatewayIntentBits, ThreadChannel } = require("discord.js");
 require("dotenv/config"); // ex: ts=2 sw=2
 
 const client = new Client({
@@ -13,9 +13,6 @@ const encode = a => a
 
 client.on('ready', () => {
 	console.log("Client ready!");
-	client.user.setPresence({
-		activities: [{ name: `every move you make on twitch`, type: ActivityType.Streaming, url: "https://twitch.tv/thebunnyman12" }],
-	});
 })
 
 let cooldowns = {}
@@ -44,13 +41,11 @@ client.on('messageCreate', async message => {
 	
 		console.log(msg)
 
-		if (msg[0].startsWith("!")) {
-			msg[0] = msg[0].replace(/^!/, "")
-			msgCapitalized[0] = msgCapitalized[0].replace(/^!/, "")
-		} else if (msg[0] == `<@${client.user.id}>`) {
-			msg.shift()
-			msgCapitalized.shift()
-		}else
+		if (msg[0].startsWith("!"))
+			msg[0] = msg[0].replace(/^!/, ""), msgCapitalized[0] = msgCapitalized[0].replace(/^!/, "")
+		else if (msg[0] == "<@" + client.user.id + ">")
+			msg.shift(), msgCapitalized.shift()
+		else
 			return
 
 			console.log(message.toString());
