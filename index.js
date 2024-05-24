@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ThreadChannel } = require("discord.js");
+const { Client, GatewayIntentBits, ThreadChannel, ActivityType } = require("discord.js");
 require("dotenv/config"); // ex: ts=2 sw=2
 
 const client = new Client({
@@ -13,6 +13,9 @@ const encode = a => a
 
 client.on('ready', () => {
 	console.log("Client ready!");
+	client.user.setPresence({
+		activities: [{ name: `every move you make on twitch`, type: ActivityType.Streaming, url: "https://twitch.tv/thebunnyman12" }],
+	});
 })
 
 let cooldowns = {}
