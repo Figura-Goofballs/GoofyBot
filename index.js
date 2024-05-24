@@ -28,7 +28,7 @@ function cooldown(name, max, rate, inc = 1) {
 }
 
 client.on('messageCreate', async message => {
-	console.log("<@" + client.user.id + ">")
+	console.log(`<@${client.user.id}>`)
 	function lost(why) {
 		throw { message: `Got lost… (${why})`, magic: true }
 	}
@@ -36,14 +36,14 @@ client.on('messageCreate', async message => {
 		var msg = message.toString().toLowerCase().split(' ');
 		var msgCapitalized = message.toString().split(' ');
 
-		if (msg[0] == "<@" + client.user.id + ">" && msg[0] == "how" && msg[1] == "goofy" && msg[2] == "are" && msg[3] == "you")
+		if (msg[0] == `<@${client.user.id}>` && msg[1] == "how" && msg[2] == "goofy" && msg[3] == "are" && msg[4] == "you")
 			return message.reply("100% goofy")
 	
-																																										console.log(msg)
+		console.log(msg)
 
 		if (msg[0].startsWith("!"))
 			msg[0] = msg[0].replace(/^!/, "")
-		else if (msg[0] == "<@" + client.user.id + ">")
+		else if (msg[0] == `<@${client.user.id}>`)
 			msg.shift()
 		else
 			return
