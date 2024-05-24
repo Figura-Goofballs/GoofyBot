@@ -35,10 +35,11 @@ client.on('messageCreate', async message => {
 		var msg = message.toString().toLowerCase().split(' ');
 		var msgCapitalized = message.toString().split(' ');
 
-		if (msg[0] == "<@1243329635937288274>" && msg[1] == "how" && msg[2] == "goofy" && msg[3] == "are" && msg[4] == "you")
+		if (msg[0] == "<@1241455011565670460>" && msg[1] == "how" && msg[2] == "goofy" && msg[3] == "are" && msg[4] == "you")
 			return message.reply("100% goofy")
 
-		if (msg[0] == "!gh" || msg[0] == "<@1243329635937288274>") {
+		if (msg[0].startsWith("!") || msg[0] == "<@1241455011565670460>") {
+			console.log(message.toString());
 			const aid = message.author.id
 			if (cooldown("bruteforce" + aid, 3, 1000))
 				return void await message.reply("bruteforce moment, go away")
@@ -55,27 +56,33 @@ client.on('messageCreate', async message => {
 			}
 
 			switch (msg[1]) {
-				case "pull":
-				case "pr":
-				case "issue":
-					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
-					if (msg[2] == null) {
-						await message.reply('Please specify a Pull Request / Issue');
-						return;
-					}
-					await message.reply('[#' + msg[2].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/pull/" + encode(msg[2]) + ")");
-					return;
+				case "gh":
+					switch(msg[2]) {
+						case "pull":
+						case "pr":
+						case "issue":
+							if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
+							if (msg[3] == null) {
+								await message.reply('Please specify a Pull Request / Issue');
+								return;
+							}
+							await message.reply('[#' + msg[3].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/pull/" + encode(msg[3]) + ")");
+							return;
 
-				case "file":
-				case "path":
-					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
-					if (msg[2] == null) {
-						await message.reply('Please specify a File / Path');
-						return;
+						case "file":
+						case "path":
+							if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
+							if (msg[3] == null) {
+								await message.reply('Please specify a File / Path');
+								return;
+							}
+							await message.reply('[' + msgCapitalized[3].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/tree/main/" + encode(msgCapitalized[3]) + ")");
+							return;
+						default:
+							await message.reply("Unknown subcommand `" + msgCapitalized[2] + "` (try `!gh help`)", { ephemeral: true })
+							return;
 					}
-					await message.reply('[' + msgCapitalized[2].replace("(?=\W)", "\\") + "](https://github.com/Figura-Goofballs/GoofyPlugin/tree/main/" + encode(msgCapitalized[2]) + ")");
 					return;
-
 				case "wiki":
 				case "docs":
 					if (cooldown("ref", 5, 2000)) return void await message.reply("Cooldown...");
