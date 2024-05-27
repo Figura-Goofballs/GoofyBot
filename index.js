@@ -180,13 +180,13 @@ console.log(msg[0])
 
 						case "mksudo":
 						case "rmsudo":
-							const who = /^(<@(?<uid>\d+)>|(?<username>[a-z0-9_.]{2,32}))$/.exec(msg[1])
+							let who = /^(<@(?<uid>\d+)>|(?<username>[a-z0-9_.]{2,32}))$/.exec(msg[1])?.groups
 							if (who.uid)
-								who = client.members.fetch(+who.uid)
+								who = message.guild.members.fetch(+who.uid)
 							else if (who.username)
-								who = client.members.fetch(who.username)
+								who = message.guild.members.fetch(who.username)
 							else
-								return void await message.reply("invalid user — need either a mention or a username")
+								return void await message.reply("invalid user — need either a mention or a username not " + msg[1])
 							if (!who)
 								return void await message.reply("unfortunately they don't exist")
 							let goal = msg[0] == "mksudo"
